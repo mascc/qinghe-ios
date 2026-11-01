@@ -1,0 +1,183 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10100000000000000000001 /* PornShopPlayerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000001 /* PornShopPlayerApp.swift */; };
+		A10100000000000000000002 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000002 /* Models.swift */; };
+		A10100000000000000000003 /* OpenSSLAES.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000003 /* OpenSSLAES.swift */; };
+		A10100000000000000000004 /* PornShopRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000004 /* PornShopRepository.swift */; };
+		A10100000000000000000005 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000005 /* DownloadManager.swift */; };
+		A10100000000000000000006 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000006 /* ContentView.swift */; };
+		A10100000000000000000007 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000009 /* Assets.xcassets */; };
+		A10100000000000000000008 /* RouHLSResourceLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000010 /* RouHLSResourceLoader.swift */; };
+		A10100000000000000000009 /* RouHLSHTTPProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000011 /* RouHLSHTTPProxy.swift */; };
+		A1010000000000000000000A /* ExtraWebsiteSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000012 /* ExtraWebsiteSources.swift */; };
+		A1010000000000000000000B /* HaijiaoSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000013 /* HaijiaoSource.swift */; };
+		A1010000000000000000000C /* MediaKeySupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000014 /* MediaKeySupport.swift */; };
+		A1010000000000000000000D /* JavhdSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000015 /* JavhdSource.swift */; };
+		A1010000000000000000000E /* ThdhSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000016 /* ThdhSource.swift */; };
+		A1010000000000000000000F /* DouyinSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000017 /* DouyinSource.swift */; };
+		A10100000000000000000010 /* DouyinMediaKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10200000000000000000018 /* DouyinMediaKey.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A10200000000000000000001 /* PornShopPlayerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PornShopPlayerApp.swift; sourceTree = "<group>"; };
+		A10200000000000000000002 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		A10200000000000000000003 /* OpenSSLAES.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSSLAES.swift; sourceTree = "<group>"; };
+		A10200000000000000000004 /* PornShopRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PornShopRepository.swift; sourceTree = "<group>"; };
+		A10200000000000000000005 /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
+		A10200000000000000000006 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A10200000000000000000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A10200000000000000000008 /* PornShopPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PornShopPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10200000000000000000009 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A10200000000000000000010 /* RouHLSResourceLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouHLSResourceLoader.swift; sourceTree = "<group>"; };
+		A10200000000000000000011 /* RouHLSHTTPProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouHLSHTTPProxy.swift; sourceTree = "<group>"; };
+		A10200000000000000000012 /* ExtraWebsiteSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraWebsiteSources.swift; sourceTree = "<group>"; };
+		A10200000000000000000013 /* HaijiaoSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HaijiaoSource.swift; sourceTree = "<group>"; };
+		A10200000000000000000014 /* MediaKeySupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaKeySupport.swift; sourceTree = "<group>"; };
+		A10200000000000000000015 /* JavhdSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavhdSource.swift; sourceTree = "<group>"; };
+		A10200000000000000000016 /* ThdhSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThdhSource.swift; sourceTree = "<group>"; };
+		A10200000000000000000017 /* DouyinSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DouyinSource.swift; sourceTree = "<group>"; };
+		A10200000000000000000018 /* DouyinMediaKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DouyinMediaKey.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A10300000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A10400000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A10400000000000000000002 /* PornShopPlayer */,
+				A10400000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A10400000000000000000002 /* PornShopPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				A10200000000000000000001 /* PornShopPlayerApp.swift */,
+				A10200000000000000000002 /* Models.swift */,
+				A10200000000000000000003 /* OpenSSLAES.swift */,
+				A10200000000000000000004 /* PornShopRepository.swift */,
+				A10200000000000000000005 /* DownloadManager.swift */,
+				A10200000000000000000006 /* ContentView.swift */,
+				A10200000000000000000010 /* RouHLSResourceLoader.swift */,
+				A10200000000000000000011 /* RouHLSHTTPProxy.swift */,
+				A10200000000000000000012 /* ExtraWebsiteSources.swift */,
+				A10200000000000000000013 /* HaijiaoSource.swift */,
+				A10200000000000000000014 /* MediaKeySupport.swift */,
+				A10200000000000000000015 /* JavhdSource.swift */,
+				A10200000000000000000016 /* ThdhSource.swift */,
+				A10200000000000000000017 /* DouyinSource.swift */,
+				A10200000000000000000018 /* DouyinMediaKey.swift */,
+				A10200000000000000000007 /* Info.plist */,
+				A10200000000000000000009 /* Assets.xcassets */,
+			);
+			path = PornShopPlayer;
+			sourceTree = "<group>";
+		};
+		A10400000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (A10200000000000000000008 /* PornShopPlayer.app */);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A10500000000000000000001 /* PornShopPlayer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10600000000000000000001 /* Build configuration list for PBXNativeTarget "PornShopPlayer" */;
+			buildPhases = (
+				A10700000000000000000001 /* Sources */,
+				A10300000000000000000001 /* Frameworks */,
+				A10800000000000000000001 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = PornShopPlayer;
+			productName = PornShopPlayer;
+			productReference = A10200000000000000000008 /* PornShopPlayer.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A10900000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = { A10500000000000000000001 = { CreatedOnToolsVersion = 26.3; }; };
+			};
+			buildConfigurationList = A10600000000000000000002 /* Build configuration list for PBXProject "PornShopPlayer" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base);
+			mainGroup = A10400000000000000000001;
+			productRefGroup = A10400000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (A10500000000000000000001 /* PornShopPlayer */);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A10800000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (A10100000000000000000007 /* Assets.xcassets in Resources */);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A10700000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10100000000000000000001 /* PornShopPlayerApp.swift in Sources */,
+				A10100000000000000000002 /* Models.swift in Sources */,
+				A10100000000000000000003 /* OpenSSLAES.swift in Sources */,
+				A10100000000000000000004 /* PornShopRepository.swift in Sources */,
+				A10100000000000000000005 /* DownloadManager.swift in Sources */,
+				A10100000000000000000006 /* ContentView.swift in Sources */,
+				A10100000000000000000008 /* RouHLSResourceLoader.swift in Sources */,
+				A10100000000000000000009 /* RouHLSHTTPProxy.swift in Sources */,
+				A1010000000000000000000A /* ExtraWebsiteSources.swift in Sources */,
+				A1010000000000000000000B /* HaijiaoSource.swift in Sources */,
+				A1010000000000000000000C /* MediaKeySupport.swift in Sources */,
+				A1010000000000000000000D /* JavhdSource.swift in Sources */,
+				A1010000000000000000000E /* ThdhSource.swift in Sources */,
+				A1010000000000000000000F /* DouyinSource.swift in Sources */,
+				A10100000000000000000010 /* DouyinMediaKey.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A11000000000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES; GCC_C_LANGUAGE_STANDARD = gnu17; SDKROOT = iphoneos; }; name = Debug; };
+		A11000000000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; GCC_C_LANGUAGE_STANDARD = gnu17; SDKROOT = iphoneos; }; name = Release; };
+		A11000000000000000000003 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 15; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = PornShopPlayer/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 15.1; MARKETING_VERSION = 1.9.4; PRODUCT_BUNDLE_IDENTIFIER = com.pornshop.player.ios; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 6.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+		A11000000000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 15; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = PornShopPlayer/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 15.1; MARKETING_VERSION = 1.9.4; PRODUCT_BUNDLE_IDENTIFIER = com.pornshop.player.ios; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_OPTIMIZATION_LEVEL = "-O"; SWIFT_VERSION = 6.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A10600000000000000000001 /* Build configuration list for PBXNativeTarget "PornShopPlayer" */ = {isa = XCConfigurationList; buildConfigurations = (A11000000000000000000003 /* Debug */, A11000000000000000000004 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A10600000000000000000002 /* Build configuration list for PBXProject "PornShopPlayer" */ = {isa = XCConfigurationList; buildConfigurations = (A11000000000000000000001 /* Debug */, A11000000000000000000002 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = A10900000000000000000001 /* Project object */;
+}

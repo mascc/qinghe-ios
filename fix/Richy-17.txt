@@ -1,0 +1,202 @@
+// ==UserScript==
+// @name         懂色帝vip视频播放
+// @author       Richy
+// @namespace    dsd-list-pla-test
+// @version      0.4.0
+// @match        *://www.dsd.com.se/index.php/vod/type/*
+// @match        *://www.dsd.com.se/index.php/vod/show/*
+// @match        *://www.dsd.com.se/index.php/vod/play/*
+// @match        *://www.dsd.com.se/vod/type/*
+// @match        *://www.dsd.com.se/vod/show/*
+// @match        *://www.dsd.com.se/vod/play/*
+// @include      *://www.dsd.com.se/index.php/vod/type/*
+// @include      *://www.dsd.com.se/index.php/vod/show/*
+// @include      *://www.dsd.com.se/index.php/vod/play/*
+// @run-at       document-idle
+// @grant        none
+// @noframes
+// ==/UserScript==
+
+(function () {
+  "use strict";
+
+  var CARD = "a.video-item, a.video-surface";
+  var STYLE = [
+    "a.video-item,a.video-surface{cursor:pointer;-webkit-tap-highlight-color:transparent}",
+    "#dsd-stage{position:absolute;left:0;top:0;z-index:1000;width:100%;height:100%;background:#000;overflow:hidden}",
+    "#dsd-stage.dsd-list{position:relative;height:455px;margin-bottom:20px;border-radius:10px}",
+    "#dsd-stage.dsd-list.dsd-h5{height:56.25vw;margin-bottom:0;border-radius:0}",
+    "#dsd-stage iframe{position:absolute;left:0;top:0;width:100%;height:100%;border:0;background:#000}",
+    ".dsd-playing>.video-before-ad,.dsd-playing>.openVip,.dsd-playing .openVip{visibility:hidden}"
+  ].join("");
+
+  function isH5() {
+    return !!document.querySelector('link[href*="/MDassets/h5/"], a.video-surface, .openVip');
+  }
+
+  function backgroundUrl(node) {
+    if (!node || !node.style) return "";
+    var matched = (node.style.backgroundImage || "").match(/url\(["']?([^"')]+)/);
+    return matched ? matched[1] : "";
+  }
+
+  function posterOf(card) {
+    var img = card.querySelector("img[data-src], img[src]");
+    if (img) {
+      var src = img.getAttribute("data-src") || "";
+      if (src.indexOf("/video") === 0 || src.indexOf("http") === 0) return src;
+      src = img.getAttribute("src") || "";
+      if (src.indexOf("/video") === 0) return src;
+    }
+    var nodes = card.querySelectorAll(".img-bg, .surface-img, .openVip, .video-before-ad");
+    for (var i = 0; i < nodes.length; i++) {
+      var url = backgroundUrl(nodes[i]);
+      if (url) return url;
+    }
+    return backgroundUrl(card);
+  }
+
+  function guessFromPoster(poster) {
+    if (!poster) return "";
+    return poster.replace(/\/1\.(jpg|jpeg|png|webp)(\?.*)?$/i, "/1000k/index.m3u8");
+  }
+
+  function readPlayerUrl(html) {
+    var mark = "var player_aaaa=";
+    var at = html.indexOf(mark);
+    if (at < 0) return "";
+    var i = at + mark.length;
+    if (html.charAt(i) !== "{") return "";
+    var depth = 0;
+    var inStr = false;
+    var esc = false;
+    for (var n = i; n < html.length; n++) {
+      var ch = html.charAt(n);
+      if (inStr) {
+        if (esc) esc = false;
+        else if (ch === "\\") esc = true;
+        else if (ch === '"') inStr = false;
+        continue;
+      }
+      if (ch === '"') inStr = true;
+      else if (ch === "{") depth++;
+      else if (ch === "}") {
+        depth--;
+        if (depth === 0) {
+          try {
+            var data = JSON.parse(html.slice(i, n + 1));
+            return data && data.url ? data.url : "";
+          } catch (e) {
+            return "";
+          }
+        }
+      }
+    }
+    return "";
+  }
+
+  function stageHost() {
+    if (/\/vod\/play\//.test(location.pathname)) {
+      var box = document.querySelector(".video-box");
+      if (box) return box;
+    }
+    return document.querySelector(".van-list")
+      || document.querySelector(".nvyou-wrap")
+      || document.querySelector(".middle")
+      || document.body;
+  }
+
+  function ensureStage() {
+    var stage = document.getElementById("dsd-stage");
+    if (stage) return stage;
+    var host = stageHost();
+    stage = document.createElement("div");
+    stage.id = "dsd-stage";
+    if (!host.classList.contains("video-box")) {
+      stage.className = isH5() ? "dsd-list dsd-h5" : "dsd-list";
+    }
+    stage.innerHTML = '<iframe id="dsd-frame" allow="autoplay; fullscreen; encrypted-media" allowfullscreen webkitallowfullscreen></iframe>';
+    host.insertBefore(stage, host.firstChild);
+    host.classList.add("dsd-playing");
+    return stage;
+  }
+
+  function mount(mediaUrl) {
+    var stage = ensureStage();
+    var frame = document.getElementById("dsd-frame");
+    if (stage.scrollIntoView) stage.scrollIntoView({ block: "nearest" });
+    frame.src = mediaUrl
+      ? "/addons/vplayer/?url=" + encodeURIComponent(mediaUrl) + "&jump="
+      : "about:blank";
+  }
+
+  function playHrefOf(card) {
+    if (card.matches && card.matches("a[href]")) return card.getAttribute("href") || "";
+    if (/\/vod\/play\//.test(location.pathname)) return location.pathname + location.search;
+    return "";
+  }
+
+  function playFromCard(card) {
+    var guessed = guessFromPoster(posterOf(card));
+    if (guessed && guessed !== posterOf(card)) {
+      mount(guessed);
+      return;
+    }
+    var href = playHrefOf(card);
+    if (!href) return;
+    fetch(href, { credentials: "same-origin" })
+      .then(function (res) { return res.text(); })
+      .then(function (html) {
+        var issued = readPlayerUrl(html);
+        if (issued) mount(issued);
+      });
+  }
+
+  var lastPlay = 0;
+  function playOnce(card) {
+    var now = Date.now();
+    if (now - lastPlay < 700) return;
+    lastPlay = now;
+    playFromCard(card);
+  }
+
+  function cardFrom(target) {
+    return target && target.closest && target.closest(CARD);
+  }
+
+  var touchY = 0;
+  document.addEventListener("touchstart", function (event) {
+    var touch = event.changedTouches && event.changedTouches[0];
+    touchY = touch ? touch.clientY : 0;
+  }, { capture: true, passive: true });
+
+  document.addEventListener("touchend", function (event) {
+    var card = cardFrom(event.target);
+    if (!card) return;
+    var touch = event.changedTouches && event.changedTouches[0];
+    if (touch && Math.abs(touch.clientY - touchY) > 12) return;
+    event.preventDefault();
+    playOnce(card);
+  }, { capture: true, passive: false });
+
+  document.addEventListener("click", function (event) {
+    var card = cardFrom(event.target);
+    if (!card) return;
+    event.preventDefault();
+    event.stopPropagation();
+    playOnce(card);
+  }, true);
+
+  function stripPlayPage() {
+    if (!/\/vod\/play\//.test(location.pathname)) return;
+    var wall = document.querySelector(".video-before-ad, .openVip, .img-bg.openVip");
+    if (!wall) return;
+    playFromCard(wall.closest(".video-box") || wall);
+  }
+
+  var style = document.createElement("style");
+  style.textContent = STYLE;
+  (document.head || document.documentElement).appendChild(style);
+  if (document.body) stripPlayPage();
+  else document.addEventListener("DOMContentLoaded", stripPlayPage);
+})();

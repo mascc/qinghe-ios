@@ -1,0 +1,58 @@
+name: ios-unsigned-ipa
+
+# 无 macOS 硬件时的官方出路：借用 GitHub 托管的 macOS runner 跑 xcodebuild。
+# 触发方式：手动 workflow_dispatch，或推一个 tag（v*）顺手出包并挂到 Release。
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    # macos-14 是 arm64 runner，自带 Xcode 15.x/16.x；iOS 15.1 部署目标完全够用。
+    runs-on: macos-14
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Toolchain info
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+          swift --version
+
+      - name: Build unsigned IPA
+        # scripts/build_ios.sh 里已经带 CODE_SIGNING_ALLOWED=NO / REQUIRED=NO，
+        # 产物是 release/青禾学堂-<version>-ios-unsigned.ipa 与 SHA256SUMS.txt。
+        run: |
+          chmod +x scripts/build_ios.sh
+          ./scripts/build_ios.sh
+
+      - name: Checksums
+        run: |
+          ls -l release
+          cat release/SHA256SUMS.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-unsigned-ipa
+          path: |
+            release/*.ipa
+            release/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/*.ipa
+            release/SHA256SUMS.txt
