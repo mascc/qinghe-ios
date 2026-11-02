@@ -887,7 +887,10 @@ actor PornShopRepository {
             .replacingOccurrences(of: "&#47;", with: "/")
     }
 
-    private func parseVideos(_ values: [[String: Any]], site: String) -> [VideoItem] {
+    /// 以下解析辅助函数都不读写 actor 状态，全部标 nonisolated：
+    /// `compactMap` 闭包里的 `[String: Any]` 不是 Sendable，只有留在同一隔离域内
+    /// 才能满足 Swift 6 的严格并发检查。
+    nonisolated private func parseVideos(_ values: [[String: Any]], site: String) -> [VideoItem] {
         var seen = Set<String>()
         return values.compactMap { object in
             guard let id = string(object, "id") ?? string(object, "vId"), !id.isEmpty, seen.insert(id).inserted else { return nil }
@@ -902,7 +905,7 @@ actor PornShopRepository {
         }
     }
 
-    private func readMeta(_ object: [String: Any]) -> (views: String?, timeLine: String?, tags: [String]) {
+    nonisolated private func readMeta(_ object: [String: Any]) -> (views: String?, timeLine: String?, tags: [String]) {
         let stats = string(object, "tags")
         let timeFromStats = stats?.split(separator: "|").first.map(String.init)
             .flatMap { ($0.contains("前") || $0.contains("刚刚") || $0.localizedCaseInsensitiveContains("ago")) ? $0.trimmingCharacters(in: .whitespaces) : nil }
@@ -926,7 +929,7 @@ actor PornShopRepository {
         return (views, time, Array(Set(tags.map { $0.trimmingCharacters(in: CharacterSet(charactersIn: "# ")) }.filter { !$0.isEmpty && $0.count <= 24 })))
     }
 
-    private func firstThumb(_ object: [String: Any]) -> String? {
+    nonisolated private func firstThumb(_ object: [String: Any]) -> String? {
         for key in ["thumbnails", "thumbNails", "covers"] {
             if let values = object[key] as? [Any], let url = values.compactMap({ normalizeURL(String(describing: $0)) }).first { return url }
         }
@@ -936,19 +939,19 @@ actor PornShopRepository {
         return nil
     }
 
-    private func normalizeURL(_ value: String) -> String? {
+    nonisolated private func normalizeURL(_ value: String) -> String? {
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.hasPrefix("https://") || trimmed.hasPrefix("http://") { return trimmed }
         if trimmed.hasPrefix("//") { return "https:" + trimmed }
         return nil
     }
 
-    private func string(_ object: [String: Any], _ key: String) -> String? {
+    nonisolated private func string(_ object: [String: Any], _ key: String) -> String? {
         guard let value = object[key], !(value is NSNull), !(value is [Any]), !(value is [String: Any]) else { return nil }
         return String(describing: value).trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty
     }
 
-    private func bool(_ object: [String: Any], _ key: String) -> Bool {
+    nonisolated private func bool(_ object: [String: Any], _ key: String) -> Bool {
         switch object[key] {
         case let value as Bool: value
         case let value as NSNumber: value.boolValue
@@ -957,7 +960,7 @@ actor PornShopRepository {
         }
     }
 
-    private func pageSize(for type: String) -> Int {
+    nonisolated private func pageSize(for type: String) -> Int {
         type.hasPrefix("home_") && type.hasSuffix("_8") ? 8 : 24
     }
 

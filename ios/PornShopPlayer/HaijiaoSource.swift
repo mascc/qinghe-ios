@@ -257,13 +257,18 @@ actor HaijiaoSource {
 
     /// `POST /api/attachment` 的 resource_id 是主题上下文，不必是当前帖子。
     /// 先试上次命中的 id，再从视频中心收集 can_play 主题，命中即停。
+    ///
+    /// 两轮探查在同一个顺序循环里完成：`tried` / `order` 都是本方法的局部状态，
+    /// 不交给嵌套的 async 函数，避免 Swift 6 把跨隔离域的可变捕获判成数据竞争。
     private func crossProbe(attachmentID: String, ownTopicID: String) async -> String? {
         let skip: Set<String> = [attachmentID, ownTopicID]
         var tried = Set<String>()
         var order: [String] = []
+        var batches: [[String]] = [cachedTopicIDs]
+        var index = 0
 
-        func probe(_ ids: [String]) async -> String? {
-            for id in ids {
+        while index < batches.count {
+            for id in batches[index] {
                 guard !skip.contains(id), tried.insert(id).inserted else { continue }
                 guard order.count < Self.crossMaxTry else { return nil }
                 order.append(id)
@@ -273,12 +278,13 @@ actor HaijiaoSource {
                     return full
                 }
             }
-            return nil
+            index += 1
+            // 第一轮（缓存主题）用完、且还没到尝试上限时，才去收集视频中心的可播放主题。
+            if index == 1, order.count < Self.crossMaxTry {
+                batches.append(await collectPlayableTopicIDs())
+            }
         }
-
-        if let full = await probe(cachedTopicIDs) { return full }
-        guard order.count < Self.crossMaxTry else { return nil }
-        return await probe(await collectPlayableTopicIDs())
+        return nil
     }
 
     private func collectPlayableTopicIDs() async -> [String] {
