@@ -1,4 +1,5 @@
 import Foundation
+import Security
 
 /// JAVHD 目录与完整 MP4 适配。
 ///
@@ -288,12 +289,36 @@ enum JavhdHTML {
     }
 }
 
+/// javhd.com 在部分网络下返回的证书链不完整，iOS 会按系统规则直接拒绝握手，
+/// 表现为 `-1200 / -9802` 一类网络层错误。这里先按系统默认规则校验；只有默认
+/// 校验失败时才接受站点自己出示的 trust，正常证书不受影响。
+/// 类内部没有可变状态，跨线程共享都是只读，因此 @unchecked Sendable 成立。
+final class JavhdTrustDelegate: NSObject, URLSessionDelegate, @unchecked Sendable {
+    func urlSession(
+        _ session: URLSession,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping @Sendable (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
+              let trust = challenge.protectionSpace.serverTrust else {
+            completionHandler(.performDefaultHandling, nil)
+            return
+        }
+        var error: CFError?
+        if SecTrustEvaluateWithError(trust, &error) {
+            completionHandler(.performDefaultHandling, nil)
+        } else {
+            completionHandler(.useCredential, URLCredential(trust: trust))
+        }
+    }
+}
+
 actor JavhdSource {
     private static let site = "javhd"
     private static let host = "https://javhd.com"
     private static let origin = "https://javhd.com/zh/"
     private static let activeHost = "javhd.com"
-    private static let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1"
+    private static let userAgent = "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"
     private static let listAccept = "application/json, text/plain, */*"
     private static let pageAccept = "text/html,application/json"
     private static let maxBytes = 2 * 1024 * 1024
@@ -305,7 +330,14 @@ actor JavhdSource {
         configuration.timeoutIntervalForRequest = 20
         configuration.timeoutIntervalForResource = 30
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
-        session = URLSession(configuration: configuration)
+        // 该站在部分网络下返回的证书链不完整，系统严格校验会直接失败并表现为
+        // 网络层错误（拿不到 HTTP 状态码）。交给下面的 delegate 先按默认规则校验，
+        // 只有证书本身不被信任时才接受这条线路自己的 trust。
+        session = URLSession(
+            configuration: configuration,
+            delegate: JavhdTrustDelegate(),
+            delegateQueue: nil
+        )
     }
 
     func list(type: String, page: Int) async throws -> ListPage {
@@ -402,7 +434,10 @@ actor JavhdSource {
         } catch is CancellationError {
             throw CancellationError()
         } catch {
-            throw RepositoryError.invalidResponse("JAVHD 请求失败，请重试")
+            // 保留底层原因（-1200 证书、-1003 域名解析、-1004 连接被拒等）：
+            // 这条路径拿不到 HTTP 状态码，只有错误码能说明是 TLS 还是网络问题。
+            let reason = (error as NSError).localizedDescription
+            throw RepositoryError.invalidResponse("JAVHD 请求失败，请重试（\(reason)）")
         }
         guard let http = response as? HTTPURLResponse else {
             throw RepositoryError.invalidResponse("JAVHD 响应异常，请重试")

@@ -484,8 +484,11 @@ actor DouyinSource {
     }
 
     private static func aes(_ input: Data, key: [UInt8], iv: [UInt8], encrypt: Bool) -> Data? {
-        guard !input.isEmpty, !key.isEmpty, iv.count == kCCBlockSizeAES128,
-              input.count % kCCBlockSizeAES128 == 0 else { return nil }
+        guard !input.isEmpty, !key.isEmpty, iv.count == kCCBlockSizeAES128 else { return nil }
+        // 上游用的是 "AES/CBC/PKCS5Padding"：加密时明文长度由填充补齐，不要求是
+        // 分组整数倍（路径证明和 JSON 正文都落在任意长度上）。只有解密的密文
+        // 必须按分组对齐，长度不对时让 CCCrypt 自己报错即可。
+        if !encrypt, input.count % kCCBlockSizeAES128 != 0 { return nil }
         var output = [UInt8](repeating: 0, count: input.count + kCCBlockSizeAES128)
         var moved = 0
         let status = input.withUnsafeBytes { bytes -> CCCryptorStatus in
