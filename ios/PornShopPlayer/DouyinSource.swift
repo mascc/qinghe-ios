@@ -366,7 +366,7 @@ actor DouyinSource {
         let trace = Self.traceID()
         // URL 路径和 x-ph 里各用一个新的 UUID：上游就是这么发的，两者不必相同。
         let route = "/" + Self.md5Hex(UUID().uuidString)
-        let proof = path + "/" + Self.base64URL(Self.md5Bytes(UUID().uuidString))
+        let proof = path + "/" + Self.base64URL(Data(Self.md5Bytes(UUID().uuidString)))
         guard let header = Self.encryptPath(proof, trace: trace) else {
             throw RepositoryError.invalidResponse("抖音路径加密失败")
         }

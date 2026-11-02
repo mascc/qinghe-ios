@@ -204,7 +204,7 @@ enum HaijiaoKeys {
             }
         }
         let probe = order.first.flatMap { probes[$0] }
-        let resolvedIV = probe?.iv ?? first.map { sequenceIV(firstSequence) }
+        let resolvedIV = probe?.iv ?? (first != nil ? sequenceIV(firstSequence) : nil)
         return Media(
             keyURI: probe?.keyURI,
             iv: resolvedIV,

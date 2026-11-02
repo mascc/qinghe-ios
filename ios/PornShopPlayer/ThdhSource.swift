@@ -175,9 +175,13 @@ enum ThdhHTML {
             let title = rawTitle.trimmingCharacters(in: .whitespacesAndNewlines)
             let note = document.firstDescendant(of: element, withClass: "module-item-note")?.cleanText
             let duration = document.firstDescendant(of: element, withClass: "th-dur")?.cleanText
-            let views = document.firstDescendant(of: element, withClass: "th-card-meta")?.cleanText
-                .map { $0.replacingOccurrences(of: ",", with: "") }
-                .flatMap { firstCapture(viewsPattern, in: $0) }
+            let views: String?
+            if let metadata = document.firstDescendant(of: element, withClass: "th-card-meta") {
+                let normalizedViews = metadata.cleanText.replacingOccurrences(of: ",", with: "")
+                views = firstCapture(viewsPattern, in: normalizedViews)
+            } else {
+                views = nil
+            }
             let poster = pickPoster(document, element)
             let isVIP = document.descendants(of: element).contains { $0.hasClass("th-vip") } || note == "VIP"
             items.append(
